@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controle IR</title>
+<style>
+:root {
+  --fundo: #f4f6f8;
+  --texto: #1b1f23;
+  --primaria: #1565c0;
+  --primaria-ativa: #0d47a1;
+  --borda: #d0d7de;
+  --erro: #c62828;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fundo: #15181c;
+    --texto: #e6e9ec;
+    --primaria: #4d8ddc;
+    --primaria-ativa: #3a74c0;
+    --borda: #30363d;
+    --erro: #ef5350;
+  }
+}
+:root[data-theme="dark"] {
+  --fundo: #15181c;
+  --texto: #e6e9ec;
+  --primaria: #4d8ddc;
+  --primaria-ativa: #3a74c0;
+  --borda: #30363d;
+  --erro: #ef5350;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: system-ui, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+}
+main { max-width: 420px; margin: 0 auto; }
+h1 { font-size: 1.5em; text-align: center; }
+label { display: block; font-size: 0.9em; margin-bottom: 4px; }
+.conexao { display: flex; gap: 8px; margin-bottom: 16px; }
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--fundo);
+  color: var(--texto);
+}
+.conexao button { padding: 10px 14px; }
+.botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+button {
+  padding: 20px 8px;
+  font-size: 1em;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primaria);
+  color: #fff;
+  cursor: pointer;
+}
+button:active { background: var(--primaria-ativa); }
+button:disabled { opacity: 0.5; cursor: wait; }
+#status { margin-top: 16px; min-height: 1.2em; text-align: center; }
+#status.erro { color: var(--erro); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Controle IR</h1>
+
+  <form class="conexao" id="form-conexao">
+    <div style="flex:1">
+      <label for="endereco">Endereço do ESP32</label>
+      <input id="endereco" type="text" placeholder="http://192.168.0.50" autocomplete="off">
+    </div>
+    <button type="submit" style="align-self:flex-end">Conectar</button>
+  </form>
+
+  <div class="botoes" id="botoes"></div>
+  <p id="status" role="status"></p>
+</main>
+
+<script>
+const CHAVE_ENDERECO = 'controle-ir-endereco';
+const campoEndereco = document.getElementById('endereco');
+const botoes = document.getElementById('botoes');
+const status = document.getElementById('status');
+
+function lerEnderecoSalvo() {
+  try { return localStorage.getItem(CHAVE_ENDERECO) || ''; } catch (e) { return ''; }
+}
+
+function salvarEndereco(valor) {
+  try { localStorage.setItem(CHAVE_ENDERECO, valor); } catch (e) { /* sem armazenamento: segue sem salvar */ }
+}
+
+// Sem endereço preenchido, usa o próprio servidor da página (útil quando a página é servida pelo ESP32)
+function baseApi() {
+  return campoEndereco.value.trim().replace(/\/+$/, '');
+}
+
+function mostrarStatus(texto, erro = false) {
+  status.textContent = texto;
+  status.classList.toggle('erro', erro);
+}
+
+async function carregarComandos() {
+  botoes.innerHTML = '';
+  mostrarStatus('Carregando comandos...');
+  try {
+    const resposta = await fetch(baseApi() + '/api/comandos');
+    if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+    const comandos = await resposta.json();
+
+    comandos.forEach(cmd => {
+      const botao = document.createElement('button');
+      botao.textContent = cmd.rotulo;
+      botao.addEventListener('click', () => enviarComando(cmd.id));
+      botoes.appendChild(botao);
+    });
+    mostrarStatus(comandos.length ? '' : 'Nenhum comando cadastrado no ESP32.');
+  } catch (e) {
+    mostrarStatus('Não foi possível obter os comandos do ESP32.', true);
+  }
+}
+
+async function enviarComando(id) {
+  const botoesDesabilitados = botoes.querySelectorAll('button');
+  botoesDesabilitados.forEach(b => b.disabled = true);
+  mostrarStatus('Enviando...');
+  try {
+    const resposta = await fetch(baseApi() + '/api/comando?id=' + id);
+    const dados = await resposta.json();
+    if (!dados.ok) throw new Error(dados.erro);
+    mostrarStatus('Enviado: ' + dados.rotulo);
+  } catch (e) {
+    mostrarStatus('Erro ao enviar: ' + e.message, true);
+  } finally {
+    botoesDesabilitados.forEach(b => b.disabled = false);
+  }
+}
+
+document.getElementById('form-conexao').addEventListener('submit', event => {
+  event.preventDefault();
+  salvarEndereco(campoEndereco.value.trim());
+  carregarComandos();
+});
+
+campoEndereco.value = lerEnderecoSalvo();
+carregarComandos();
+</script>
+</body>
+</html>

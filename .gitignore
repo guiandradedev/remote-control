@@ -1,0 +1,6 @@
+.pio/
+.vscode/
+*.elf
+*.bin
+.DS_Store
+.claude/settings.local.json
