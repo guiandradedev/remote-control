@@ -11,6 +11,15 @@ O dispositivo:
 
 Base: projeto Q0962 do canal BrincandoComIdeias (originais fora deste repositório, em `../Q0962-main` e `../Q0962-Sketch`). A biblioteca é o **IRremote 4.7.1**, instalada em `~/Arduino/libraries/IRremote`.
 
+## Proposta final do aplicativo
+
+O produto final é um aplicativo de controle de temperatura que simula diretamente o controle remoto do ar condicionado: o usuário escolhe o estado desejado (ligado/desligado, modo, temperatura, ventilador) e o app envia o sinal IR equivalente ao que o controle original enviaria.
+
+- O app não depende de um botão capturado. Ele gera o sinal a partir do estado escolhido.
+- Os parâmetros são identificados aos poucos. Cada parâmetro decodificado entra como uma coluna da tabela de estados, na ordem em que for confirmado pelos dados.
+- Parâmetros ainda não decodificados ficam fixos no sinal, com o valor que o ar-condicionado usa nas capturas de referência.
+- A geração do sinal é validada em duas etapas: primeiro contra as capturas existentes, depois com testes no dispositivo físico, feitos pelo usuário.
+
 ## Hardware e pinos
 
 - **Pinos vêm do código, não do esquemático.** O esquemático (`Q0962_Esquematico.png`) mostra D15/D4, mas o usuário pediu explicitamente que os pinos do código fossem usados.
