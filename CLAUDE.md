@@ -65,13 +65,12 @@ remote-control/
 
 - **Idioma:** comentários, mensagens do Serial e identificadores em português, como no código original. Respostas ao usuário em português.
 - **Serial:** mensagens curtas e sem ruído da biblioteca no sketch de experimento; a saída precisa ser fácil de copiar.
-- **Compilação:** use `scripts/build-sketch.sh esp-code/<sketch>`. Ele usa PlatformIO (`~/.platformio/penv/bin/platformio`) com ESP32 `espressif32`. Não há hardware no ambiente de desenvolvimento: a verificação é apenas de compilação.
-- **Commits:** o repositório ainda não tem commits. Não commite sem pedido. Quando commitar, use a linha de atribuição indicada no ambiente.
-- **Pronomes:** o usuário não informou pronomes; use "você" ou "they/them" quando precisar se referir a ele.
+- **Compilação:** use `scripts/build-sketch.sh esp-code/<sketch>`. Ele usa PlatformIO (`~/.platformio/penv/bin/platformio`) com ESP32 `espressif32`. A IA não tem acesso ao hardware: a validação feita por ela é só de compilação. O usuário tem o dispositivo físico e faz os testes no ESP32 e no ar-condicionado; os resultados dele são a validação de funcionamento.
+- **Commits:** Não commite sem pedido. Quando commitar, use a skill `padroes-de-commits` (formato `:emoji: tipo(escopo): descrição`, tipos e emojis) e a linha de atribuição indicada no ambiente.
 
 ## Estado atual e pendências
 
-- Nenhum sketch foi testado no hardware ainda. O Experimento e o WiFi compilam com sucesso.
+- Nenhum sketch foi testado no hardware ainda. O Experimento e o WiFi compilam com sucesso. Os testes no dispositivo físico são feitos pelo usuário.
 - O vetor `sinal_0` do transmissor foi capturado com o bug do gap (incompleto); precisa ser recapturado com o Experimento.
 - Credenciais Wi-Fi são placeholders em `Q0962-WiFi.ino`; não colocar senhas reais no repositório.
 - Cenários a capturar: ligar em 24, ligar em 21, desligar em 27, aumentar velocidade, reduzir temperatura para 23 (lista completa em `captures/SCENARIOS.md`).

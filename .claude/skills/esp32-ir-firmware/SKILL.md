@@ -36,7 +36,7 @@ scripts/build-sketch.sh esp-code/<nome-do-sketch>
 
 Resultado esperado: `[SUCCESS]`. Avisos `#pragma message` da biblioteca são normais. Um erro de compilação deve ser corrigido antes de terminar.
 
-Não há hardware no ambiente. Diga explicitamente que a verificação foi só de compilação; não afirme que o sketch funciona com o ar condicionado.
+A IA não tem acesso ao hardware. Diga explicitamente que a verificação foi só de compilação; não afirme que o sketch funciona com o ar condicionado. O usuário tem o ESP32 e o ar-condicionado e valida no dispositivo físico: ao terminar, peça que ele teste e relate o resultado (o que o Serial imprimiu, se o sinal chegou ao ar-condicionado, etc.).
 
 ## Armadilhas já encontradas
 

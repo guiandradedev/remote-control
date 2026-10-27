@@ -24,7 +24,7 @@ Verificação obrigatória:
 Ao concluir, informe:
 - Arquivos alterados e o que mudou em uma linha cada.
 - O resultado da compilação.
-- Que não houve teste no hardware (o ambiente não tem o ESP32 conectado).
+- Que não houve teste no hardware (a IA não tem acesso ao ESP32). Peça ao usuário para testar no dispositivo físico e relatar o resultado.
 - Qualquer decisão tomada sem confirmação do usuário.
 
 Não faça commit, não envie nada ao ar condicionado e não grave o ESP32 sem pedido explícito.
